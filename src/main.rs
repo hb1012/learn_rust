@@ -1,5 +1,8 @@
 #![allow(unused)]
 
+extern crate num;
+extern crate itertools;
+
 mod helper;
 use helper::{string_helper, math_helper};
 use animals::{Legs, Kind, Animal};
@@ -7,6 +10,24 @@ use animals::{Legs, Kind, Animal};
 use rand::Rng;
 use std::collections::HashMap;
 use ansi_term::Style;
+use num::FromPrimitive;
+use num::bigint::BigInt;
+use num::rational::{Ratio, BigRational};
+use itertools::{join, max, sorted};
+
+fn approx_sqrt(number: u64, iterations: usize) -> BigRational {
+    let start: Ratio<BigInt>
+        = Ratio::from_integer(FromPrimitive::from_u64(number).unwrap());
+
+    let mut approx = start.clone();
+
+    for _ in 0..iterations {
+        approx = (&approx + (&start / &approx)) /
+            Ratio::from_integer(FromPrimitive::from_u64(2).unwrap());
+    }
+
+    approx
+}
 
 pub mod animals {
     #[derive(Debug)]
@@ -77,38 +98,6 @@ fn store(map: &mut HashMap<String, u32>, res: Coin) {
 }
 
 fn main() {
-    // let a = 42;
-    // println!("a = {}", a);
-
-    // let a = 66.6_f64;
-    // println!("a = {}", a);
-
-    // let res = 39 * (72 / 12 - 5);
-    // println!("res = {}", res);
-
-    // let new_res = 10 * (res / 18);
-    // println!("new_res = {}", new_res);
-
-    // println!("{} bis {}", u128::min_value(), u128::max_value());
-    // println!("{} bis {}", i128::min_value(), i128::max_value());
-
-    // let vector = [5, 23450, 99];
-    // println!("vector = {:?}", vector);
-    // println!("vector = {:#?}", vector);
-
-    // let [x, y, z] = vector;
-    // println!("{} {} {}", x, y, z);
-
-    // let chars:[char;4] = ['a', 'b', 'c', 'd'];
-    // println!("{}", chars[0]);
-
-    // let b = (5, true, "das ist ein Test", 'b');
-    // println!("{} {} {} {}", b.0, b.1, b.2, b.3);
-    // let (eins, zwei, drei, vier) = b;
-    // println!("{} {} {} {}", eins, zwei, drei, vier);
-    // let string = b.2;
-    // println!("{}", string);
-
     println!("{}", math_helper::max(3, 7));
     
     let s1 = String::from("Hallo");
@@ -166,4 +155,16 @@ fn main() {
     let word = "konnichiwa".to_owned();
     ten_times(move |j| println!("{}, {}", word, j));
 */
+    println!("{}", approx_sqrt(10, 4)); // prints 4057691201/1283082416
+
+    let a = [3, 2, 5, 8, 7];
+
+    // Combine all iterator elements into one String,
+    // seperated by *.
+    println!("{:?}", join(&a, "*"));
+    // Return the maximum value of the iterable.
+    println!("{:?}", max(a.iter()).unwrap());
+    // Collect all the iterable's elements into a
+    // sorted vector in ascending order.
+    println!("{:?}", sorted(a.iter()));
 }
